@@ -44,11 +44,11 @@ def key_is_sudo(key):
 
 
 def arg_as(fmt, res, code, headers):
-    if isinstance(res, io.BytesIO) and not fmt == "raw":
+    if isinstance(res, io.BytesIO) and fmt != "raw":
         res = res.read()
 
     if isinstance(res, str):
-        if fmt == "raw" or fmt == "default":
+        if fmt in ("raw", "default"):
             return Response(res, code, content_type="text/plain",
                             headers=headers)
 
@@ -57,7 +57,7 @@ def arg_as(fmt, res, code, headers):
                             headers=headers)
 
     elif isinstance(res, bytes):
-        if fmt == "raw" or fmt == "default":
+        if fmt in ("raw", "default"):
             content_type = mimetypes.guess_type("a." + headers["type"])[0]
             del headers["type"]
             return Response(res, code, content_type=content_type,
@@ -68,7 +68,7 @@ def arg_as(fmt, res, code, headers):
                             content_type="application/json", headers=headers)
 
     elif isinstance(res, list) or isinstance(res, dict):
-        if fmt == "json" or fmt == "default":
+        if fmt in ("json", "default"):
             return Response(json.dumps(res), code,
                             content_type="application/json", headers=headers)
 
